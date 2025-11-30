@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Mario Jump</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #5c94fc;
+            height: 100vh;
+            overflow: hidden;
+            font-family: -apple-system, sans-serif;
+        }
+        
+        .game {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Ground */
+        .ground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 25px;
+            background: #00a800;
+        }
+        
+        /* Mario character - CSS only */
+        .mario {
+            position: absolute;
+            bottom: 25px;
+            left: 20px;
+            width: 20px;
+            height: 30px;
+            z-index: 10;
+        }
+        
+        .mario .hat {
+            position: absolute;
+            top: 0;
+            left: -2px;
+            width: 24px;
+            height: 8px;
+            background: #ff0000;
+            border-radius: 3px 3px 0 0;
+        }
+        
+        .mario .head {
+            position: absolute;
+            top: 6px;
+            left: 2px;
+            width: 16px;
+            height: 14px;
+            background: #ffcc99;
+            border-radius: 50%;
+        }
+        
+        .mario .body {
+            position: absolute;
+            top: 18px;
+            left: 2px;
+            width: 16px;
+            height: 12px;
+            background: #0000ff;
+            border-radius: 2px;
+        }
+        
+        /* Jump animation */
+        .mario.jump {
+            animation: jump 0.6s ease-out;
+        }
+        
+        @keyframes jump {
+            0% { bottom: 25px; }
+            50% { bottom: 85px; }
+            100% { bottom: 25px; }
+        }
+        
+        /* Pipe obstacle */
+        .pipe {
+            position: absolute;
+            bottom: 25px;
+            width: 24px;
+            height: 35px;
+            background: #00a800;
+            border: 2px solid #006400;
+            border-radius: 3px 3px 0 0;
+            animation: movePipe 2.5s linear infinite;
+        }
+        
+        .pipe::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -4px;
+            width: 32px;
+            height: 10px;
+            background: #00a800;
+            border: 2px solid #006400;
+            border-radius: 3px;
+        }
+        
+        @keyframes movePipe {
+            0% { right: -30px; }
+            100% { right: 110%; }
+        }
+        
+        /* Multiple pipes with delays */
+        .pipe:nth-child(2) { animation-delay: 0s; }
+        .pipe:nth-child(3) { animation-delay: 1.2s; }
+        .pipe:nth-child(4) { animation-delay: 2.4s; }
+        
+        /* Tap instruction */
+        .tap-zone {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+        
+        .score {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            z-index: 50;
+        }
+        
+        .instructions {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            z-index: 50;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .instructions.hidden {
+            display: none;
+        }
+        
+        /* Clouds for decoration */
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.9;
+        }
+        
+        .cloud1 {
+            top: 15px;
+            right: 20px;
+            width: 25px;
+            height: 12px;
+        }
+        
+        .cloud2 {
+            top: 25px;
+            right: 10px;
+            width: 15px;
+            height: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game">
+        <div class="score">TAP TO JUMP!</div>
+        
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+        
+        <div class="mario" id="mario">
+            <div class="hat"></div>
+            <div class="head"></div>
+            <div class="body"></div>
+        </div>
+        
+        <div class="pipe"></div>
+        <div class="pipe"></div>
+        <div class="pipe"></div>
+        
+        <div class="ground"></div>
+        
+        <div class="tap-zone" onclick="jump()"></div>
+    </div>
+
+    <script>
+        // Minimal JS - just for jump trigger
+        function jump() {
+            var mario = document.getElementById('mario');
+            mario.classList.remove('jump');
+            // Trigger reflow to restart animation
+            void mario.offsetWidth;
+            mario.classList.add('jump');
+        }
+        
+        // Also handle touch
+        document.querySelector('.tap-zone').addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            jump();
+        });
+    </script>
+</body>
+</html>
